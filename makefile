@@ -36,13 +36,26 @@
 # - DEPFLAGS according to Eric Weddingtion's fix (avrfreaks/gcc-forum)
 # - F_OSC Define in CFLAGS and AFLAGS
 
-
 # MCU name
-MCU = atmega16
+#MCU = attiny84
+#MCU = attiny13
+#MCU = atmega16
+#MCU = atmega88
+MCU = atmega328p
+#MCU = atmega644p
+
+# Fuses - only used if "make fuses" is used
+LFUSE      = 0xe2
+HFUSE      = 0xd9
+EFUSE      = 0xff
 
 # Main Oscillator Frequency
 # This is only used to define F_OSC in all assembler and c-sources.
-F_OSC = 3686400
+#F_CPU = 32768
+#F_CPU = 1000000
+F_CPU = 8000000
+#F_CPU = 11059200
+#F_CPU = 16000000
 
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
@@ -177,10 +190,12 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 # Type: avrdude -c ?
 # to get a full listing.
 #
-AVRDUDE_PROGRAMMER = stk500
+#AVRDUDE_PROGRAMMER = stk500
+#AVRDUDE_PROGRAMMER = avrispmkII
+AVRDUDE_PROGRAMMER = uisp
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
-AVRDUDE_PORT = com1    # programmer connected to serial device
+AVRDUDE_PORT = usb    # programmer connected to serial device
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
@@ -315,7 +330,13 @@ sizeafter:
 gccversion : 
 	@$(CC) --version
 
+# set fuses
+fuses:
+	$(AVRDUDE) $(AVRDUDE_FLAGS) -U lfuse:w:$(LFUSE):m -U hfuse:w:$(HFUSE):m -U efuse:w:$(EFUSE):m
 
+# show fuses already set on micro-controller
+show_fuses:
+	$(AVRDUDE) $(AVRDUDE_FLAGS) -nv
 
 # Program the device.  
 program: $(TARGET).hex $(TARGET).eep
@@ -434,3 +455,4 @@ clean_list :
 build elf hex eep lss sym coff extcoff \
 clean clean_list program
 
+ 
