@@ -64,8 +64,8 @@ FORMAT = ihex
 TARGET = main
 
 
-# List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c
+# All c files in directory will be compiled
+SRC = $(wildcard *.c)
 
 
 # List Assembler source files here.
